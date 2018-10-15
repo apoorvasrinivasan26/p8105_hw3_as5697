@@ -1,0 +1,43 @@
+---
+title: "P8105_hw3_as5697"
+author: "Apoorva Srinivasan"
+date: "10/14/2018"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+ collapse = TRUE,
+  fig.width = 10,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+library(tidyverse)
+library(readxl)
+library(p8105.datasets)
+library(ggplot2)
+
+theme_set(theme_bw() + theme(legend.position = "bottom"))
+```
+
+
+#Problem 1
+
+###1.1
+
+```{r}
+data(brfss_smart2010)
+```
+
+```{r tidy_brfss}
+brfss_tidy = brfss_smart2010 %>% 
+  janitor::clean_names() %>%
+  filter(topic == "Overall Health") %>%
+  filter(response %in% c("Excellent", "Very good", "Good", "Fair", "Poor")) %>% 
+  rename(location_abbr = locationabbr, location_desc = locationdesc) %>%
+  mutate(response = as.factor(response)) %>% 
+  mutate(
+    response = fct_relevel(response, c("Excellent", "Very good", "Good", "Fair", "Poor"))
+    )
+```
