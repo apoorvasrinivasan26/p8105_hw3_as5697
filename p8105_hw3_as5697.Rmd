@@ -101,6 +101,9 @@ brfss %>%
 
 ###1.5
 
+For each year and state, compute the average proportion in each response category (taking the average across locations in a state). Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time.
+
+
 ```{r p1.5}
 brfss %>% 
   group_by(year, state, response) %>% 
@@ -112,3 +115,72 @@ brfss %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
   
 ```
+
+
+#PROBLEM 2
+
+```{r}
+data("instacart")
+  instacart = instacart %>% janitor::clean_names()
+```
+
+The dataset has `r nrow(instacart)` by `r ncol(instacart)` columns. The dataset contains some key variables such as aisle , department  and product name. Each row is a single product from an order with key variables corresponding information on the `product_name`, `department`, grocery `aisle`, if it was `reordered`, day of the week and hour it was ordered, and the `user_id` who ordered it.There are `r nrow(distinct(instacart, product_id))` products that were ordered by `r nrow(distinct(instacart, user_id))` users, from `r nrow(distinct(instacart, department_id))` distinct departments.
+
+
+How many aisles are there, and which aisles are the most items ordered from?
+
+```{r}
+
+instacart %>%
+  group_by(aisle) %>%
+  summarize(order_per_aisle = n()) %>%
+  arrange(desc(order_per_aisle)) %>%
+  head() %>%
+  knitr::kable()
+```
+
+There are `r nrow(distinct(instacart, aisle))` distinct aisles, with the top 6 aisles being fresh vegetables, fresh fruits, packaged vegetables fruits, yogurt, packaged cheese, and water seltzer sparkling water.
+
+Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.
+
+```{r}
+instacart %>% 
+  group_by(aisle) %>% 
+  summarize(n_items = n()) %>% 
+  mutate(aisle = reorder(aisle, desc(n_items))) %>% 
+  ggplot(aes(x = aisle, y = n_items)) + geom_point() + labs(main = "Number of items ordered from each aisle", x = "Aisle", y = "No. of items")  + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+Make a table showing the most popular item in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”.
+
+```{r}
+instacart %>% 
+  filter(aisle %in% c("baking ingredients", "dog food care", "packaged vegetables fruits")) %>% 
+  group_by(aisle, product_name) %>% 
+  summarize(n_prod = n()) %>% 
+  filter(n_prod == max(n_prod)) %>% 
+  knitr::kable()
+```
+
+Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
+
+
+
+```{r}
+instacart %>%
+  filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) %>% 
+  mutate(order_dow = ordered(order_dow, levels = c(0:6), labels = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))) %>% 
+  group_by(product_name, order_dow) %>% 
+  summarize(mean = round(mean(order_hour_of_day))) %>% 
+  spread(key = order_dow, value = mean) %>% 
+  knitr::kable()
+```
+
+Sunday is taken as 0. 
+Both coffee ice cream and pink lady apples are mostly ordered during around noon and after.
+
+
+
+
+
