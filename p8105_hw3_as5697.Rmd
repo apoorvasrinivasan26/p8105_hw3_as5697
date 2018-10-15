@@ -14,7 +14,6 @@ knitr::opts_chunk$set(
 )
 
 library(tidyverse)
-library(readxl)
 library(p8105.datasets)
 library(ggplot2)
 library(ggridges)
@@ -28,12 +27,13 @@ theme_set(theme_bw() + theme(legend.position = "bottom"))
 
 #Problem 1
 
-###1.1
 
 ```{r}
 data(brfss_smart2010)
 ```
 
+Data cleaning:
+The code chunk below cleans data based on "Overall Health" and it recodes the reponse column into a factor data type and set the levels from the "Excellent" to "Poor".
 ```{r tidy_brfss}
 brfss = brfss_smart2010 %>% 
   janitor::clean_names() %>%
@@ -47,9 +47,7 @@ brfss = brfss_smart2010 %>%
 ```
 
 
-###1.2
-
-In 2002, which states were observed at 7 locations?
+__In 2002, which states were observed at 7 locations?__
 
 
 ```{r}
@@ -61,9 +59,10 @@ brfss %>%
   head()
 ```
 
-###1.3
+In 2002, the states: CT, FL and NC were observed at 7 locations.
 
-Make a “spaghetti plot” that shows the number of locations in each state from 2002 to 2010.
+
+__Make a “spaghetti plot” that shows the number of locations in each state from 2002 to 2010.__
 
 
 ```{r p1.3}
@@ -80,10 +79,11 @@ brfss %>%
   scale_color_viridis(discrete = TRUE) 
 ```
 
+We can see that the resulting spaghetti plot is very cluttered which makes it hard to read.
 
-###1.4
 
-Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State.
+
+__Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State.__
 
 
 ```{r p1.4}
@@ -99,9 +99,8 @@ brfss %>%
 ```
 
 
-###1.5
 
-For each year and state, compute the average proportion in each response category (taking the average across locations in a state). Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time.
+__For each year and state, compute the average proportion in each response category (taking the average across locations in a state). Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time.__
 
 
 ```{r p1.5}
@@ -116,10 +115,12 @@ brfss %>%
   
 ```
 
+In the above five-panel plot, we show the distribution of the proportion of the five responses per year per state.
+
 
 #PROBLEM 2
 
-```{r}
+```{r p2.1}
 data("instacart")
   instacart = instacart %>% janitor::clean_names()
 ```
@@ -127,9 +128,9 @@ data("instacart")
 The dataset has `r nrow(instacart)` by `r ncol(instacart)` columns. The dataset contains some key variables such as aisle , department  and product name. Each row is a single product from an order with key variables corresponding information on the `product_name`, `department`, grocery `aisle`, if it was `reordered`, day of the week and hour it was ordered, and the `user_id` who ordered it.There are `r nrow(distinct(instacart, product_id))` products that were ordered by `r nrow(distinct(instacart, user_id))` users, from `r nrow(distinct(instacart, department_id))` distinct departments.
 
 
-How many aisles are there, and which aisles are the most items ordered from?
+__How many aisles are there, and which aisles are the most items ordered from?__
 
-```{r}
+```{r p2.2}
 
 instacart %>%
   group_by(aisle) %>%
@@ -141,9 +142,9 @@ instacart %>%
 
 There are `r nrow(distinct(instacart, aisle))` distinct aisles, with the top 6 aisles being fresh vegetables, fresh fruits, packaged vegetables fruits, yogurt, packaged cheese, and water seltzer sparkling water.
 
-Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.
+__Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.__
 
-```{r}
+```{r p2.3}
 instacart %>% 
   group_by(aisle) %>% 
   summarize(n_items = n()) %>% 
@@ -151,10 +152,12 @@ instacart %>%
   ggplot(aes(x = aisle, y = n_items)) + geom_point() + labs(main = "Number of items ordered from each aisle", x = "Aisle", y = "No. of items")  + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
+From the plot, we can see that fresh vegetables are maximum in number while beauty products are minimum in eahc aisle.
 
-Make a table showing the most popular item in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”.
 
-```{r}
+__Make a table showing the most popular item in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”.__
+
+```{r p2.4}
 instacart %>% 
   filter(aisle %in% c("baking ingredients", "dog food care", "packaged vegetables fruits")) %>% 
   group_by(aisle, product_name) %>% 
@@ -163,11 +166,22 @@ instacart %>%
   knitr::kable()
 ```
 
-Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
+Most popular products in the following aisles are: 
+
+  * baking ingredients - Light Brown Sugar
+  
+  * dog food care - Snacks Sticks Chicken and Reci Recipe Dog Treats
+  
+  * packaged vegetables fruits - Organic Baby Spinach
+  
+ From these results, we can tell that customers who shop at instacart are definitely going for healthier options.
+ 
+  
+__Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).__
 
 
 
-```{r}
+```{r p2.5}
 instacart %>%
   filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) %>% 
   mutate(order_dow = ordered(order_dow, levels = c(0:6), labels = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))) %>% 
@@ -184,14 +198,98 @@ Both coffee ice cream and pink lady apples are mostly ordered during around noon
 
 #PROBLEM 3
 
-Cleaning data
 
-```{r}
-data('ny_noaa')
-#View(ny_noaa)
-ny_noaa = 
-  ny_noaa %>% 
-  separate(date, into = c('year', 'month', 'date'), sep = '-') %>% 
-  mutate(prcp = prcp/10, tmax = as.numeric(tmax, na.rm = TRUE)/10, tmin = as.numeric(tmin, na.rm = TRUE)/10)
+```{r p3.1}
+data("ny_noaa") %>%
+  janitor::clean_names()
 ```
 
+
+Given dataset relevant weather informations collected from all New York state weather stations from January 1, 1981 through December 31, 2010. 
+
+The dimensions of the dataset (rows, columns) are `r dim(ny_noaa)`. The key variables here are the weather station ID , snowfall in mm , precipitation in tenths of mm , min and max temperature in tenths of celsius.
+
+
+There are `r ny_noaa %>% filter(is.na(prcp)) %>% count()/nrow(ny_noaa) * 100`% NAs in the precipitation column and `r ny_noaa %>% filter(is.na(snow)) %>% count()/nrow(ny_noaa) * 100`% NA's in the snow column and `r ny_noaa %>% filter(is.na(snwd)) %>% count()/nrow(ny_noaa) * 100`% NA's in the Snow depth (snwd) column and `r ny_noaa %>% filter(is.na(tmin)) %>% count()/nrow(ny_noaa) * 100`% NA's in the minimum temperature column and `r ny_noaa %>% filter(is.na(tmax)) %>% count()/nrow(ny_noaa) * 100`% NA's in the max temperature column.
+
+As can be seen above, the issue of missing data is a real problem with our data set here since around 44% of our tmin and tmax values are missing, nearly 15% of our snowfall data is missing. This will result in incorrect analysis.
+
+
+Cleaning data
+```{r p3.2, cache = TRUE}
+ny_noaa_tidy = 
+  ny_noaa %>% 
+  separate(date, into = c("year", "month", "day"), sep = "-") %>% 
+  mutate(month = as.integer(month), year = as.integer(year), day = as.integer(day), tmin = as.integer(tmin), tmax = as.integer(tmax)) %>% 
+  mutate(month = month.name[month], tmin = tmin / 10, tmax = tmax / 10, prcp = prcp / 10) #since they're in tenths of mm/celsius 
+```
+
+
+__For snowfall, what are the most commonly observed values? Why?__
+
+```{r p3.3}
+ny_noaa_most_snow =
+  ny_noaa_tidy %>% 
+  group_by(snow) %>% 
+  count(snow) %>% 
+  arrange(desc(n)) %>% 
+  head()
+```
+The most commonly observed value is 0 mm, which makes sense as it does not snow for most of the year. While winter does see more snow, it stil doesn't snow enough to make a difference to our 30 yr station data.
+
+
+
+__Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?__
+
+
+```{r p3.4}
+ny_noaa_tidy %>% 
+  group_by(year, month, id) %>% 
+  filter(month == "January" | month == "July") %>% 
+  summarise(mean_tmax = mean(tmax, na.rm = TRUE)) %>% 
+  ggplot(aes(x = year, y = mean_tmax, group = year)) +
+  geom_boxplot() +
+  facet_grid(~ month)
+  labs(
+    title = "Average max temperature for Jan and July in each station across 1981 to 2010",
+    x = "Year",
+    y = "Average max temperature (C)"
+  )
+```
+
+There is a clear observable structure between the two panels from January and July. We see that the average temperature in January has had a median near 0 degree celsius all through the years 1981 to 2010 and the median of the average temperature in July is somewhere between 25 and 20 degree celsius for the month of July all through the years. 
+
+We do notice quite a few outliers. There are a few outliers near and aboe 0 degree celsius for that year. Similar scenario is observed for January 2009. It is helpful to notice that there are outlier is most of the years for January data except 1981, 1985, 1989, 1997 and 2006.
+
+Similarly for the July datasets except for 1999, 2009 and 2010 all other years have outlier(s). Most of the outliers are similarly located around 20 degree celsius.
+
+
+ __Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.__
+
+
+
+```{r p3.5}
+tmax_vs_tmin_p = 
+  ny_noaa_tidy %>% 
+  ggplot((aes(x = tmin, y = tmax))) +
+  geom_hex(na.rm = TRUE) +
+  labs(
+    tile = "Max temperature vs Min temperature", 
+    x = "Minimum temperature (C)",
+    y = "Maximum temperature (C)"
+  ) +
+  theme(legend.text = element_text(size = 9, hjust = 1, angle = 90))
+
+snowfall_vs_year_p = 
+  ny_noaa_tidy %>% 
+  filter(snow > 0, snow < 100) %>% 
+  ggplot(aes(x = year, y = snow, group = year)) +
+  geom_boxplot(na.rm = TRUE) +
+  labs(
+    title = "Snowfall distribution for each year",
+    x = "Year",
+    y = "Snowfall (mm)"
+  )
+
+tmax_vs_tmin_p + snowfall_vs_year_p
+```
