@@ -259,7 +259,7 @@ ny_noaa_tidy %>%
 
 There is a clear observable structure between the two panels from January and July. We see that the average temperature in January has had a median near 0 degree celsius all through the years 1981 to 2010 and the median of the average temperature in July is somewhere between 25 and 20 degree celsius for the month of July all through the years. 
 
-We do notice quite a few outliers. There are a few outliers near and aboe 0 degree celsius for that year. Similar scenario is observed for January 2009. It is helpful to notice that there are outlier is most of the years for January data except 1981, 1985, 1989, 1997 and 2006.
+We do notice quite a few outliers. There are a few outliers near and aboe 0 degree celsius for that year. There are outlier in most of the years for January data except 1981, 1985, 1989, 1997 and 2006.
 
 Similarly for the July datasets except for 1999, 2009 and 2010 all other years have outlier(s). Most of the outliers are similarly located around 20 degree celsius.
 
